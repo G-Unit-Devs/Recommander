@@ -78,12 +78,19 @@ def get_top_recommendations(user_data, dataset, top_n=3):
     feature_importance = {critere: similarity_results[critere].mean() for critere in valid_criteres}
     top_features = sorted(feature_importance.items(), key=lambda x: x[1], reverse=True)
 
-    # 📌 Retourner les résultats sous forme JSON
+    if not valid_criteres:
+        return {
+            "user_input": user_data,
+            "top_3_recommendations": [],
+            "top_features": [],
+            "message": "Pas assez de données pour calculer une recommandation."
+        }
     return {
         "user_input": user_data,
         "top_3_recommendations": top_matches[["role", "domain", "experience", "about", "similarity_score"]].to_dict(orient="records"),
         "top_features": top_features
     }
+
 
 # 📌 Endpoint pour obtenir les recommandations
 @app.post("/recommend/")
